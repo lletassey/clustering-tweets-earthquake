@@ -128,8 +128,5 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# Shapefile data
-tweets.*
-
 # Keys
 keys.py
