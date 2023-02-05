@@ -1,2 +1,11 @@
 # Ignore geojson files
 *.geojson
+
+# Ignore pgw files
+*.pgw
+
+# Ignore .db
+*.db
+
+# Ignore .png
+*.png
