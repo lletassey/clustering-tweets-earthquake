@@ -9,3 +9,8 @@
 
 # Ignore .png
 *.png
+
+# Ignore Twitter keys
+keys.py
+
+*.pyc
