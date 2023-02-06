@@ -13,4 +13,5 @@
 # Ignore Twitter keys
 keys.py
 
-*.pyc
+# Ignore python cache
+__pycache__
