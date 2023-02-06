@@ -12,3 +12,5 @@
 
 # Ignore Twitter keys
 keys.py
+
+*.pyc
