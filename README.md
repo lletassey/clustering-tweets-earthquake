@@ -4,6 +4,8 @@ This repository contains the code for testing different clustering algorithms on
 
 ## Clustering algorithms
 
+- KMeans : [sklearn.cluster.KMeans](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html#sklearn.cluster.KMeans)
+- MiniBatchKMeans : [sklearn.cluster.MiniBatchKMeans](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.MiniBatchKMeans.html#sklearn.cluster.MiniBatchKMeans)
 - DBSCAN : [sklearn.cluster.DBSCAN](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.DBSCAN.html#sklearn.cluster.DBSCAN)
 - ST-DBSCAN : [ST-DBSCAN](https://github.com/eren-ck/st_dbscan)
 
