@@ -1,30 +1,7 @@
 """Utility functions for interacting with Tweepy objects."""
 from geopy import OpenMapQuest
 import keys
-from textblob import TextBlob 
 import time 
-import tweepy
-
-def get_API(wait=True, notify=True):
-    """Authenticate with Twitter and return API object."""
-    # configure the OAuthHandler
-    auth = tweepy.OAuth1UserHandler(keys.consumer_key, keys.consumer_secret, keys.access_token, keys.access_token_secret)
-
-    # get the API object
-    return tweepy.API(auth=auth, wait_on_rate_limit=wait)
-
-def print_tweets(tweets):
-    """For each Tweepy Status object in tweets, display the 
-    user's screen_name and tweet text. If the language is not
-    English, translate the text with TextBlob."""
-    for tweet in tweets:
-        print(f'{tweet.user.screen_name}:', end=' ')
-
-        if 'en' in tweet.lang:
-            print(f'{tweet.text}\n')
-        elif 'und' not in tweet.lang:  # translate to English first
-            print(f'\n  ORIGINAL: {tweet.text}')
-            print(f'TRANSLATED: {TextBlob(tweet.text).translate()}\n')
 
 def get_tweet_content(tweet, location=False):
     """Return dictionary with data from tweet (a Status object)."""

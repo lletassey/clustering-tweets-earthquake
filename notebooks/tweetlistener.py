@@ -9,6 +9,7 @@ class TweetListener(tweepy.StreamingClient):
         self.counts_dict = counts_dict
         self.topic = topic
         self.tweet = ''
+        self.fields = {}
         super().__init__(bearer_token, wait_on_rate_limit=True)
 
     def on_connect(self):
@@ -29,8 +30,12 @@ class TweetListener(tweepy.StreamingClient):
         if not includes.get('places'):
             return
         self.counts_dict['locations'] += 1
-        self.tweets_list.append(self.tweet)
-        print(f'{includes["users"][0]}: {self.tweets_list[-1]}, {includes["places"][0]["full_name"]}\n')
+        self.fields['username'] = includes['users'][0]['username']
+        self.fields['text'] = self.tweet
+        self.fields['location'] = includes['places'][0]['full_name']
+        self.tweets_list.append(self.fields)
+        self.fields = {}
+        print(f'{includes["users"][0]}: {self.tweet}, {includes["places"][0]["full_name"]}\n')
         print(f'Tweets with location: {self.counts_dict["locations"]}')
 
     
