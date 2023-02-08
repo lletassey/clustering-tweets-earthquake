@@ -1,4 +1,3 @@
-# tweetutilities.py
 """Utility functions for interacting with Tweepy objects."""
 from geopy import OpenMapQuest
 import keys
@@ -9,12 +8,10 @@ import tweepy
 def get_API(wait=True, notify=True):
     """Authenticate with Twitter and return API object."""
     # configure the OAuthHandler
-    auth = tweepy.OAuthHandler(keys.consumer_key, keys.consumer_secret)
-    auth.set_access_token(keys.access_token, keys.access_token_secret)
+    auth = tweepy.OAuth1UserHandler(keys.consumer_key, keys.consumer_secret, keys.access_token, keys.access_token_secret)
 
     # get the API object
-    return tweepy.API(auth, wait_on_rate_limit=wait, 
-                      wait_on_rate_limit_notify=notify)
+    return tweepy.API(auth=auth, wait_on_rate_limit=wait)
 
 def print_tweets(tweets):
     """For each Tweepy Status object in tweets, display the 
@@ -72,19 +69,3 @@ def get_geocodes(tweet_list):
     
     print('Done geocoding')
     return bad_locations
-
-
-##########################################################################
-# (C) Copyright 2019 by Deitel & Associates, Inc. and                    #
-# Pearson Education, Inc. All Rights Reserved.                           #
-#                                                                        #
-# DISCLAIMER: The authors and publisher of this book have used their     #
-# best efforts in preparing the book. These efforts include the          #
-# development, research, and testing of the theories and programs        #
-# to determine their effectiveness. The authors and publisher make       #
-# no warranty of any kind, expressed or implied, with regard to these    #
-# programs or to the documentation contained in these books. The authors #
-# and publisher shall not be liable in any event for incidental or       #
-# consequential damages in connection with, or arising out of, the       #
-# furnishing, performance, or use of these programs.                     #
-##########################################################################
