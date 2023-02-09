@@ -3,13 +3,14 @@ import tweepy
 class TweetListener(tweepy.StreamingClient):
     """Handles incoming Tweet stream."""
 
-    def __init__(self, bearer_token, counts_dict, tweets_list, topic):
+    def __init__(self, bearer_token, counts_dict, tweets_list, topic, limit):
         """Configure the TweetListener."""
         self.tweets_list = tweets_list
         self.counts_dict = counts_dict
         self.topic = topic
         self.tweet = ''
         self.fields = {}
+        self.TWEET_LIMIT = limit
         super().__init__(bearer_token, wait_on_rate_limit=True)
 
     def on_connect(self):
@@ -24,6 +25,10 @@ class TweetListener(tweepy.StreamingClient):
             
             self.counts_dict['total_tweets'] += 1
             self.tweet = tweet.text
+
+        if self.counts_dict['locations'] < self.TWEET_LIMIT:
+            self.disconnect()
+            return
 
     def on_includes(self, includes):
         """Called when a new includes object arrives."""
