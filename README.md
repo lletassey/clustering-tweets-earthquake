@@ -1,4 +1,8 @@
-# clustering-tweets-earthquake
+# Clustering Quake Tweets
+
+<p align='center'>
+    <img src="./notebooks/images/dbscan.png" alt="Getting Index OID" width="450"/>
+</p>
 
 This repository contains the code for testing different clustering algorithms on tweets related to the 2019 Teil earthquake.
 

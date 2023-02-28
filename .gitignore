@@ -8,7 +8,7 @@
 *.db
 
 # Ignore .png
-*.png
+# *.png
 
 # Ignore Twitter keys
 keys.py
