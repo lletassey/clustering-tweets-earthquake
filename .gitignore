@@ -1,5 +1,5 @@
 # Ignore geojson files
-*.geojson
+# *.geojson
 
 # Ignore pgw files
 *.pgw
