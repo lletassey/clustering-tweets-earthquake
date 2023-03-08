@@ -21,3 +21,11 @@ conda env create -f environment.yml
 <p align='center'>
     <img src="./notebooks/images/dbscan_3d.png" alt="3D Plot" width="450"/>
 </p>
+
+We use ThreeJS to plot hulls.
+
+<p align='center'>
+    <img src="./notebooks/images/threejs_hulls_3d.png" alt="3D Plot" width="450"/>
+</p>
+
+> Made with ♥ by Léa, Romain and Salaheddine. 
