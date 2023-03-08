@@ -28,4 +28,12 @@ We use ThreeJS to plot hulls.
     <img src="./notebooks/images/threejs_hulls_3d.png" alt="3D Plot" width="450"/>
 </p>
 
+## Parameters
+
+We test the optimal parameters for ST-DBSCAN.
+
+<p align='center'>
+    <img src="./notebooks/images/param.png" alt="3D Plot" width="450"/>
+</p>
+
 > Made with ♥ by Léa, Romain and Salaheddine. 
