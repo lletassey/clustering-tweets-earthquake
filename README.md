@@ -1,10 +1,8 @@
-# Clustering Teil Quake Tweets
+# Spatial Temporal Clustering of 2019 Teil Quake Tweets
 
 <p align='center'>
     <img src="./notebooks/images/dbscan.png" alt="2D Plot" width="450"/>
 </p>
-
-Spatial temporal clustering of Teil Quake Tweets.
 
 ## Getting Started
 
