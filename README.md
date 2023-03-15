@@ -20,7 +20,7 @@ conda env create -f environment.yml
     <img src="./notebooks/images/st_dbscan/st_dbscan_3d_eps1_90_km_eps2_10_min.png" alt="3D Plot" width="450"/>
 </p>
 
-We use ThreeJS to plot hulls.
+We use ThreeJS to plot hulls. Visit [this link](https://lletassey.github.io/clustering-tweets-earthquake/threejs/index.html).
 
 <p align='center'>
     <img src="./notebooks/images/st_dbscan/threejs_hulls_3d.png" alt="3D Plot" width="450"/>
