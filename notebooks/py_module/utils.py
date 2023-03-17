@@ -111,16 +111,7 @@ def plot_space_time_cube(tweets, eps1_terrain, eps2):
         edgecolor="#22272e",
     )
 
-    # Save fig
-    plt.savefig("st_dbscan.png", dpi=300, bbox_inches="tight")
-    plt.savefig(
-        f"./images/st_dbscan/st_dbscan_3d_eps1_{eps1_terrain / 1_000:.0f}_km_eps2_{int(eps2 / 60)}_min.png",
-        dpi=300,
-        facecolor=ax.get_figure().get_facecolor(),
-        edgecolor="none",
-    )
-
-    plt.show()
+    return fig, ax
 
 
 def plot_hulls(tweets, hulls, eps1_terrain, eps2, min_samples):
@@ -220,11 +211,5 @@ def plot_hulls(tweets, hulls, eps1_terrain, eps2, min_samples):
         bbox=props,
         color="#22272e",
     )
-    # Save figures
-    base.get_figure().savefig(
-        f"./images/st_dbscan/st_dbscan_eps1_{eps1_terrain / 1_000:.0f}_km_eps2_{int(eps2 / 60)}_min.png",
-        dpi=300,
-        bbox_inches="tight",
-        facecolor=base.get_figure().get_facecolor(),
-        edgecolor="none",
-    )
+
+    return fig2, base
