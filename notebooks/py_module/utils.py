@@ -55,7 +55,7 @@ def plot_space_time_cube(tweets, eps1_terrain, eps2):
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(5, 5))
 
     # Figure properties
-    fig.tight_layout(pad=3)
+    fig.tight_layout(pad=4)
     fig.set_facecolor("white")
 
     m2km = lambda x, _: f"{x/1000:g}"
