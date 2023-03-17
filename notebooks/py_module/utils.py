@@ -42,8 +42,6 @@ def create_hulls(tweets, clustering_algo, coords):
                 ),
             ]
         )
-        # Reset the index
-        hulls.index = range(0, len(hulls))
         # Set the CRS of the geodataframe
         hulls.set_crs(epsg=2154, inplace=True)
         # Calculate the area of the hulls
