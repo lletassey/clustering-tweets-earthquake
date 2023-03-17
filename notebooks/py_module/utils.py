@@ -55,7 +55,7 @@ def plot_space_time_cube(tweets, eps1_terrain, eps2):
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(5, 5))
 
     # Figure properties
-    fig.tight_layout(pad=3)
+    fig.tight_layout(pad=4)
     fig.set_facecolor("white")
 
     m2km = lambda x, _: f"{x/1000:g}"
@@ -111,7 +111,12 @@ def plot_space_time_cube(tweets, eps1_terrain, eps2):
         edgecolor="#22272e",
     )
 
-    return fig, ax
+    ax.get_figure().savefig(
+        f"./images/st_dbscan/st_dbscan_cube_eps1_{eps1_terrain / 1_000:.0f}_km_eps2_{int(eps2 / 60)}_min.png",
+        dpi=300,
+        facecolor=ax.get_figure().get_facecolor(),
+        edgecolor="none",
+    )
 
 
 def plot_hulls(tweets, hulls, eps1_terrain, eps2, min_samples):
@@ -212,4 +217,10 @@ def plot_hulls(tweets, hulls, eps1_terrain, eps2, min_samples):
         color="#22272e",
     )
 
-    return fig2, base
+    base.get_figure().savefig(
+        f"./images/st_dbscan/st_dbscan_eps1_{eps1_terrain / 1_000:.0f}_km_eps2_{int(eps2 / 60)}_min.png",
+        dpi=300,
+        bbox_inches="tight",
+        facecolor=base.get_figure().get_facecolor(),
+        edgecolor="none",
+    )
