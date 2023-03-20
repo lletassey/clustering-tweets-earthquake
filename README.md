@@ -1,8 +1,14 @@
-# Spatial Temporal Clustering of 2019 Teil Quake Tweets
+# Agnostic Extraction af Quake's Active Area
 
 <p align='center'>
     <img src="./notebooks/images/st_dbscan/st_dbscan_eps1_90_km_eps2_10_min.png" alt="2D Plot" width="650"/>
 </p>
+
+## Context
+
+This project is part of a course issued at the ENSG-Géomatique school, it was proposed to us by [BRGM](https://www.brgm.fr/en) in order to identify a quake's active area once we retrieved tweets related to a seismic activity.
+
+As a case study, we worked on the 2019 Teil Quake by testing different clustering algorithms to find the most active areas. Since tweets have a temporal dimension, we decided to use a spatial temporal clustering algorithm. In our case we used [ST-DBSCAN](https://github.com/eren-ck/st_dbscan).
 
 ## Setup
 
@@ -14,18 +20,12 @@ conda env create -f environment.yml
 
 You'll find the ST-DBSCAN Jupyter Notebook in the `notebooks` folder.
 
-## Context
-
-This project is part of a course issued at the ENSG-Géomatique school, it was proposed to us by [BRGM](https://www.brgm.fr/en). They use Twitter API to automatically retrieve tweets related to quake events.
-
-The goal of our project was to cluster tweets about the 2019 Teil Quake in order to find the most active areas. Since tweets have a temporal dimension, we decided to use a spatial temporal clustering algorithm. In our case we used [ST-DBSCAN](https://github.com/eren-ck/st_dbscan).
-
 ## Analysis
 
 In order to prepare the tweets for the clustering, we followed these steps:
 
-- We used hdf format to store the tweets.
-- We removed tweets that were not in the area of interest (in this case France).
+- We used `.hdf` format to store the tweets.
+- We removed tweets that were not in the area of interest (in this case **France**).
 - We removed tweets with no coordinates.
 - We ordered tweets by datetime and calculated a cumulative timestamp.
 
