@@ -81,12 +81,17 @@ def plot_cube_hulls(tweets, eps1_terrain, eps2, hulls, min_samples):
     plt.figtext(
         0.5,
         0.95,
-        "ST-DBSCAN Clustering of Teil Quake Tweets",
+        "\n".join(
+            (
+                r"Extraction agnostique de la zone de ressenti",
+                r"du séisme de 2019 à Teil",
+            )
+        ),
         ha="center",
         va="top",
-        fontsize=14,
-        color="black",
-        weight="medium",
+        fontsize=15,
+        color="#818274",
+        weight="heavy",
     )
 
     ax_cube, ax_hull = fig.add_subplot(GS[0], projection="3d"), fig.add_subplot(
@@ -205,7 +210,7 @@ def plot_cube_hulls(tweets, eps1_terrain, eps2, hulls, min_samples):
     textstr = "\n".join(
         (
             r"$eps1=%.0f$ km" % (eps1_terrain / 1_000,),
-            r"$eps2=%d$ min" % (eps2,),
+            r"$eps2=%d$ min" % (int(eps2 / 60),),
             r"$min_{samples}=%d$ tweets" % (min_samples,),
         )
     )
