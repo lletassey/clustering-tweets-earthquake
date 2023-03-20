@@ -1,7 +1,7 @@
 # Spatial Temporal Clustering of 2019 Teil Quake Tweets
 
 <p align='center'>
-    <img src="./notebooks/images/st_dbscan/st_dbscan_eps1_90_km_eps2_10_min.png" alt="2D Plot" width="450"/>
+    <img src="./notebooks/images/st_dbscan/st_dbscan_eps1_90_km_eps2_10_min.png" alt="2D Plot" width="550"/>
 </p>
 
 ## Setup
