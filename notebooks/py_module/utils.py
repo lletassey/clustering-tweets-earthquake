@@ -1,9 +1,32 @@
 import datetime
+import matplotlib
 import pandas as pd
 import geopandas as gpd
+import matplotlib as mpl
+from cycler import cycler
 import matplotlib.pyplot as plt
 from scipy.spatial import ConvexHull
 from shapely.geometry import Polygon
+
+
+# Set up matplotlib rcParams (runtime configuration) for plot color
+hulls_colors = [
+    "#1f77b4",
+    "#ff7f0e",
+    "#2ca02c",
+    "#d62728",
+    "#9467bd",
+    "#8c564b",
+    "#e377c2",
+    "#7f7f7f",
+    "#bcbd22",
+    "#17becf",
+]
+
+mpl.rcParams["axes.prop_cycle"] = cycler(
+    "color",
+    hulls_colors,
+)
 
 
 def create_hulls(tweets, clustering_algo, coords):
@@ -50,27 +73,39 @@ def create_hulls(tweets, clustering_algo, coords):
     return hulls
 
 
-def plot_space_time_cube(tweets, eps1_terrain, eps2):
-    # Create figure with 3D projected axis
-    fig, ax = plt.subplots(subplot_kw={"projection": "3d"}, figsize=(5, 5))
+def plot_cube_hulls(tweets, eps1_terrain, eps2, hulls, min_samples):
+    GS = matplotlib.gridspec.GridSpec(1, 2)
+    fig = plt.figure(figsize=(10, 6))
+    fig.patch.set_facecolor("white")
 
-    # Figure properties
-    fig.tight_layout(pad=4)
-    fig.set_facecolor("white")
+    plt.figtext(
+        0.5,
+        0.95,
+        "ST-DBSCAN Clustering of Teil Quake Tweets",
+        ha="center",
+        va="top",
+        fontsize=14,
+        color="black",
+        weight="medium",
+    )
+
+    ax_cube, ax_hull = fig.add_subplot(GS[0], projection="3d"), fig.add_subplot(
+        GS[1], projection="rectilinear"
+    )
 
     m2km = lambda x, _: f"{x/1000:g}"
-    ax.xaxis.set_major_formatter(m2km)
-    ax.yaxis.set_major_formatter(m2km)
+    ax_cube.xaxis.set_major_formatter(m2km)
+    ax_cube.yaxis.set_major_formatter(m2km)
 
     # Set axis labels
-    ax.set_xlabel("X (km)", fontsize=7, labelpad=5, color="black")
-    ax.set_ylabel("Y (km)", fontsize=7, labelpad=5, color="black")
-    ax.set_zlabel("Temps cumulé (min)", fontsize=7, labelpad=5, color="black")
+    ax_cube.set_xlabel("X (km)", fontsize=7, labelpad=5, color="black")
+    ax_cube.set_ylabel("Y (km)", fontsize=7, labelpad=5, color="black")
+    ax_cube.set_zlabel("Temps cumulé (min)", fontsize=7, labelpad=5, color="black")
 
     # Set axis ticks color
-    ax.tick_params(axis="x", colors="black", labelsize=7)
-    ax.tick_params(axis="y", colors="black", labelsize=7)
-    ax.tick_params(axis="z", colors="black", labelsize=7)
+    ax_cube.tick_params(axis="x", colors="black", labelsize=7)
+    ax_cube.tick_params(axis="y", colors="black", labelsize=7)
+    ax_cube.tick_params(axis="z", colors="black", labelsize=7)
 
     # Select tweets without noise
     no_noise_tweets = tweets[tweets.index.get_level_values(0) != -1]
@@ -81,7 +116,7 @@ def plot_space_time_cube(tweets, eps1_terrain, eps2):
             no_noise_tweets.index.get_level_values(0) == cluster
         ]
         # Plot tweets in cluster
-        ax.scatter3D(
+        ax_cube.scatter3D(
             no_noise_tweetscluster["x_m"],
             no_noise_tweetscluster["y_m"],
             no_noise_tweetscluster["cumulative_time_sec"] / 60,
@@ -91,15 +126,8 @@ def plot_space_time_cube(tweets, eps1_terrain, eps2):
         )
 
     # Axis properties
-    ax.set_facecolor("white")
-    ax.set_title(
-        "ST-DBSCAN Clustering of Teil Quake Tweets",
-        fontsize=11,
-        weight="medium",
-        color="black",
-        pad=10,
-    )
-    ax.legend(
+    ax_cube.set_facecolor("white")
+    ax_cube.legend(
         loc="best",
         fontsize=9,
         labelcolor="#22272e",
@@ -111,24 +139,14 @@ def plot_space_time_cube(tweets, eps1_terrain, eps2):
         edgecolor="#22272e",
     )
 
-    ax.get_figure().savefig(
-        f"./images/st_dbscan/st_dbscan_cube_eps1_{eps1_terrain / 1_000:.0f}_km_eps2_{int(eps2 / 60)}_min.png",
-        dpi=300,
-        facecolor=ax.get_figure().get_facecolor(),
-        edgecolor="none",
-    )
-
-
-def plot_hulls(tweets, hulls, eps1_terrain, eps2, min_samples):
     # Read France geojson
     basemap = gpd.read_file(filename="../data/france.geojson")
     basemap = basemap.to_crs("EPSG:2154")
 
-    fig2, base = plt.subplots(figsize=(6, 6))
     # Plot base map
-    basemap.plot(ax=base, color="#F2E7DC", figsize=(7, 7), linewidth=0)
-    base.set_facecolor("#818274")
-    base.get_figure().patch.set_facecolor("#22272e")
+    basemap.plot(ax=ax_hull, color="#F2E7DC", figsize=(7, 7), linewidth=0)
+    ax_hull.set_facecolor("#818274")
+    ax_hull.get_figure().patch.set_facecolor("white")
 
     # Plot tweets with color based on cluster
     for cluster in tweets.index.get_level_values(0).unique():
@@ -138,7 +156,7 @@ def plot_hulls(tweets, hulls, eps1_terrain, eps2, min_samples):
         if cluster in hulls.index.values or cluster == -1:
             print("Cluster {}: {} tweets".format(cluster, num_tweets))
             tweets[tweets.index.get_level_values(0) == cluster].plot(
-                ax=base,
+                ax=ax_hull,
                 markersize=6 if cluster == -1 else 10,
                 label="Noise" if cluster == -1 else "Cluster {}".format(cluster),
                 marker="x" if cluster != -1 else "+",
@@ -148,24 +166,15 @@ def plot_hulls(tweets, hulls, eps1_terrain, eps2, min_samples):
 
     for cluster in hulls.index:
         hulls[hulls.index == cluster].plot(
-            ax=base,
+            ax=ax_hull,
             alpha=0.3,
             color="C{}".format(cluster),
             edgecolor="C{}".format(cluster),
             linewidth=1,
         )
 
-    # Set title
-    base.set_title(
-        "ST-DBSCAN Clustering of Teil Quake Tweets",
-        fontsize=16,
-        weight="medium",
-        color="white",
-        pad=10,
-    )
-
     # Set legend
-    base.legend(
+    ax_hull.legend(
         loc="best",
         fontsize=9,
         labelcolor="#22272e",
@@ -176,23 +185,22 @@ def plot_hulls(tweets, hulls, eps1_terrain, eps2, min_samples):
         framealpha=1,
         edgecolor="#22272e",
     )
-    # bbox_to_anchor=(1.23, 1.01
 
     # Add grid
-    base.grid(color="#161819", linestyle="-", linewidth=0.2, alpha=0.3)
+    ax_hull.grid(color="#161819", linestyle="-", linewidth=0.2, alpha=0.3)
 
     # Change tick labels
     m2km = lambda x, _: f"{x/1000:g}"
-    base.xaxis.set_major_formatter(m2km)
-    base.yaxis.set_major_formatter(m2km)
+    ax_hull.xaxis.set_major_formatter(m2km)
+    ax_hull.yaxis.set_major_formatter(m2km)
 
     # Set axis labels
-    base.set_xlabel("X (km)", fontsize=7, labelpad=5, color="white")
-    base.set_ylabel("Y (km)", fontsize=7, labelpad=5, color="white")
+    ax_hull.set_xlabel("X (km)", fontsize=7, labelpad=5, color="black")
+    ax_hull.set_ylabel("Y (km)", fontsize=7, labelpad=5, color="black")
 
     # Set axis ticks color
-    base.tick_params(axis="x", colors="white")
-    base.tick_params(axis="y", colors="white")
+    ax_hull.tick_params(axis="x", colors="black", labelsize=7)
+    ax_hull.tick_params(axis="y", colors="black", labelsize=7)
 
     textstr = "\n".join(
         (
@@ -206,21 +214,16 @@ def plot_hulls(tweets, hulls, eps1_terrain, eps2, min_samples):
     props = dict(facecolor="white", edgecolor="#22272e")
 
     # place a text box in upper left in axes coords
-    base.text(
+    ax_hull.text(
         0.02,
         0.98,
         textstr,
-        transform=base.transAxes,
+        transform=ax_hull.transAxes,
         fontsize=8,
         verticalalignment="top",
         bbox=props,
         color="#22272e",
     )
 
-    base.get_figure().savefig(
-        f"./images/st_dbscan/st_dbscan_eps1_{eps1_terrain / 1_000:.0f}_km_eps2_{int(eps2 / 60)}_min.png",
-        dpi=300,
-        bbox_inches="tight",
-        facecolor=base.get_figure().get_facecolor(),
-        edgecolor="none",
-    )
+    plt.tight_layout(pad=3.0)
+    plt.show()
