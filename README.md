@@ -37,13 +37,7 @@ For us to choose the optimal parameters for ST-DBSCAN, we iterated over the mini
 
 ## Results
 
-We adopted the following parameters: `eps1 = 90 km` and `eps2 = 10 min` and a minimum number of tweets of 22. We obtained the following results:
-
-<p align='center'>
-    <img src="./notebooks/images/st_dbscan/st_dbscan_cube_eps1_90_km_eps2_10_min.png" alt="3D Plot" width="450"/>
-</p>
-
-We have also used ThreeJS to plot cluster hulls. Visit [this link](https://lletassey.github.io/clustering-tweets-earthquake/threejs/index.html) to see the result.
+We adopted the following parameters: `eps1 = 90 km` and `eps2 = 10 min` and a minimum number of tweets of 22. We used ThreeJS to plot cluster hulls. Visit [this link](https://lletassey.github.io/clustering-tweets-earthquake/threejs/index.html) to see the result.
 
 <p align='center'>
     <img src="./notebooks/images/st_dbscan/threejs.png" alt="3D Plot" width="450"/>
