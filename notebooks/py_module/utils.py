@@ -10,26 +10,6 @@ from scipy.spatial import ConvexHull
 from shapely.geometry import Polygon
 
 
-# Set up matplotlib rcParams (runtime configuration) for plot color
-hulls_colors = [
-    "#1f77b4",
-    "#ff7f0e",
-    "#2ca02c",
-    "#d62728",
-    "#9467bd",
-    "#8c564b",
-    "#e377c2",
-    "#7f7f7f",
-    "#bcbd22",
-    "#17becf",
-]
-
-mpl.rcParams["axes.prop_cycle"] = cycler(
-    "color",
-    hulls_colors,
-)
-
-
 def create_hulls(tweets, clustering_algo, coords):
     # Create a hulls geodataframe
     hulls = gpd.GeoDataFrame(
@@ -75,6 +55,24 @@ def create_hulls(tweets, clustering_algo, coords):
 
 
 def plot_tweets_hulls(tweets, hulls, eps1, eps2, min_samples):
+    # Set up matplotlib rcParams (runtime configuration) for plot color
+    hulls_colors = [
+        "#1f77b4",
+        "#ff7f0e",
+        "#2ca02c",
+        "#d62728",
+        "#9467bd",
+        "#8c564b",
+        "#e377c2",
+        "#7f7f7f",
+        "#bcbd22",
+        "#17becf",
+    ]
+
+    mpl.rcParams["axes.prop_cycle"] = cycler(
+        "color",
+        hulls_colors,
+    )
     # Create gridspec for 2 subplots
     GS = matplotlib.gridspec.GridSpec(1, 2)
     fig = plt.figure(figsize=(10, 6))
@@ -183,7 +181,7 @@ def plot_tweets_hulls(tweets, hulls, eps1, eps2, min_samples):
             alpha=0.3,
             color="C{}".format(cluster),
             edgecolor="C{}".format(cluster),
-            linewidth=1,
+            linewidth=0.8,
         )
 
     # Add grid
@@ -246,3 +244,5 @@ def plot_tweets_hulls(tweets, hulls, eps1, eps2, min_samples):
     )
 
     plt.show()
+
+    return fig
