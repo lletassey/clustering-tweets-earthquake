@@ -73,11 +73,13 @@ def create_hulls(tweets, clustering_algo, coords):
     return hulls
 
 
-def plot_cube_hulls(tweets, eps1_terrain, eps2, hulls, min_samples):
+def plot_tweets_hulls(tweets, hulls, eps1, eps2, min_samples):
+    # Create gridspec for 2 subplots
     GS = matplotlib.gridspec.GridSpec(1, 2)
     fig = plt.figure(figsize=(10, 6))
     fig.patch.set_facecolor("white")
 
+    # Set title
     plt.figtext(
         0.5,
         0.95,
@@ -90,27 +92,42 @@ def plot_cube_hulls(tweets, eps1_terrain, eps2, hulls, min_samples):
         ha="center",
         va="top",
         fontsize=15,
-        color="#818274",
+        color="black",
         weight="heavy",
     )
 
+    # Create subplots
     ax_cube, ax_hull = fig.add_subplot(GS[0], projection="3d"), fig.add_subplot(
         GS[1], projection="rectilinear"
     )
 
+    # Set background color
+    ax_cube.set_facecolor("white")
+    ax_hull.set_facecolor("#818274")
+
+    # Set formatter for axis ticks
     m2km = lambda x, _: f"{x/1000:g}"
     ax_cube.xaxis.set_major_formatter(m2km)
     ax_cube.yaxis.set_major_formatter(m2km)
+
+    ax_hull.xaxis.set_major_formatter(m2km)
+    ax_hull.yaxis.set_major_formatter(m2km)
 
     # Set axis labels
     ax_cube.set_xlabel("X (km)", fontsize=7, labelpad=5, color="black")
     ax_cube.set_ylabel("Y (km)", fontsize=7, labelpad=5, color="black")
     ax_cube.set_zlabel("Temps cumulé (min)", fontsize=7, labelpad=5, color="black")
 
+    ax_cube.set_xlabel("X (km)", fontsize=7, labelpad=5, color="black")
+    ax_cube.set_ylabel("Y (km)", fontsize=7, labelpad=5, color="black")
+
     # Set axis ticks color
     ax_cube.tick_params(axis="x", colors="black", labelsize=7)
     ax_cube.tick_params(axis="y", colors="black", labelsize=7)
     ax_cube.tick_params(axis="z", colors="black", labelsize=7)
+
+    ax_hull.tick_params(axis="x", colors="black", labelsize=7)
+    ax_hull.tick_params(axis="y", colors="black", labelsize=7)
 
     # Select tweets without noise
     no_noise_tweets = tweets[tweets.index.get_level_values(0) != -1]
@@ -130,28 +147,9 @@ def plot_cube_hulls(tweets, eps1_terrain, eps2, hulls, min_samples):
             label="Noise" if cluster == -1 else "Cluster {}".format(cluster),
         )
 
-    # Axis properties
-    ax_cube.set_facecolor("white")
-    ax_cube.legend(
-        loc="best",
-        fontsize=9,
-        labelcolor="#22272e",
-        markerscale=2,
-        facecolor="white",
-        title_fontsize=14,
-        fancybox=False,
-        framealpha=1,
-        edgecolor="#22272e",
-    )
-
-    # Read France geojson
+    # Plot basemap
     basemap = gpd.read_file(filename="../data/france.geojson")
-    basemap = basemap.to_crs("EPSG:2154")
-
-    # Plot base map
-    basemap.plot(ax=ax_hull, color="#F2E7DC", figsize=(7, 7), linewidth=0)
-    ax_hull.set_facecolor("#818274")
-    ax_hull.get_figure().patch.set_facecolor("white")
+    basemap.plot(ax=ax_hull, color="#F2E7DC", linewidth=0)
 
     # Plot tweets with color based on cluster
     for cluster in tweets.index.get_level_values(0).unique():
@@ -178,19 +176,6 @@ def plot_cube_hulls(tweets, eps1_terrain, eps2, hulls, min_samples):
             linewidth=1,
         )
 
-    # Set legend
-    ax_hull.legend(
-        loc="best",
-        fontsize=9,
-        labelcolor="#22272e",
-        markerscale=2,
-        facecolor="white",
-        title_fontsize=14,
-        fancybox=False,
-        framealpha=1,
-        edgecolor="#22272e",
-    )
-
     # Add grid
     ax_hull.grid(color="#161819", linestyle="-", linewidth=0.2, alpha=0.3)
 
@@ -209,7 +194,7 @@ def plot_cube_hulls(tweets, eps1_terrain, eps2, hulls, min_samples):
 
     textstr = "\n".join(
         (
-            r"$eps1=%.0f$ km" % (eps1_terrain / 1_000,),
+            r"$eps1=%.0f$ km" % (eps1 / 1_000,),
             r"$eps2=%d$ min" % (int(eps2 / 60),),
             r"$min_{samples}=%d$ tweets" % (min_samples,),
         )
@@ -228,6 +213,31 @@ def plot_cube_hulls(tweets, eps1_terrain, eps2, hulls, min_samples):
         verticalalignment="top",
         bbox=props,
         color="#22272e",
+    )
+
+    # Legend
+    ax_cube.legend(
+        loc="best",
+        fontsize=9,
+        labelcolor="#22272e",
+        markerscale=2,
+        facecolor="white",
+        title_fontsize=14,
+        fancybox=False,
+        framealpha=1,
+        edgecolor="#22272e",
+    )
+
+    ax_hull.legend(
+        loc="best",
+        fontsize=9,
+        labelcolor="#22272e",
+        markerscale=2,
+        facecolor="white",
+        title_fontsize=14,
+        fancybox=False,
+        framealpha=1,
+        edgecolor="#22272e",
     )
 
     plt.tight_layout(pad=3.0)
