@@ -201,8 +201,8 @@ def plot_tweets_hulls(tweets, hulls, eps1, eps2, min_samples):
     props = dict(facecolor="white", edgecolor="#22272e")
 
     axes[0].text(
-        0.02,
-        0.98,
+        -1.16,
+        0.93,
         textstr,
         transform=axes[1].transAxes,
         fontsize=8,
