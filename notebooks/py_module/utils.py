@@ -5,6 +5,7 @@ import geopandas as gpd
 import matplotlib as mpl
 from cycler import cycler
 import matplotlib.pyplot as plt
+from prettytable import PrettyTable
 from scipy.spatial import ConvexHull
 from shapely.geometry import Polygon
 
@@ -73,14 +74,16 @@ def create_hulls(tweets, clustering_algo, coords):
     return hulls
 
 
-def plot_cube_hulls(tweets, eps1_terrain, eps2, hulls, min_samples):
+def plot_tweets_hulls(tweets, hulls, eps1, eps2, min_samples):
+    # Create gridspec for 2 subplots
     GS = matplotlib.gridspec.GridSpec(1, 2)
     fig = plt.figure(figsize=(10, 6))
     fig.patch.set_facecolor("white")
 
+    # Set title
     plt.figtext(
         0.5,
-        0.95,
+        0.92,
         "\n".join(
             (
                 r"Extraction agnostique de la zone de ressenti",
@@ -90,27 +93,42 @@ def plot_cube_hulls(tweets, eps1_terrain, eps2, hulls, min_samples):
         ha="center",
         va="top",
         fontsize=15,
-        color="#818274",
+        color="black",
         weight="heavy",
     )
 
-    ax_cube, ax_hull = fig.add_subplot(GS[0], projection="3d"), fig.add_subplot(
-        GS[1], projection="rectilinear"
+    # Create subplots
+    axes = fig.add_subplot(GS[0], projection="rectilinear"), fig.add_subplot(
+        GS[1], projection="3d"
     )
 
+    # Set background color
+    axes[0].set_facecolor("#818274")
+    axes[1].set_facecolor("white")
+
+    # Set formatter for axis ticks
     m2km = lambda x, _: f"{x/1000:g}"
-    ax_cube.xaxis.set_major_formatter(m2km)
-    ax_cube.yaxis.set_major_formatter(m2km)
+    axes[0].xaxis.set_major_formatter(m2km)
+    axes[0].yaxis.set_major_formatter(m2km)
+
+    axes[1].xaxis.set_major_formatter(m2km)
+    axes[1].yaxis.set_major_formatter(m2km)
 
     # Set axis labels
-    ax_cube.set_xlabel("X (km)", fontsize=7, labelpad=5, color="black")
-    ax_cube.set_ylabel("Y (km)", fontsize=7, labelpad=5, color="black")
-    ax_cube.set_zlabel("Temps cumulé (min)", fontsize=7, labelpad=5, color="black")
+    axes[0].set_xlabel("X (km)", fontsize=7, labelpad=5, color="black")
+    axes[0].set_ylabel("Y (km)", fontsize=7, labelpad=5, color="black")
+
+    axes[1].set_xlabel("X (km)", fontsize=7, labelpad=5, color="black")
+    axes[1].set_ylabel("Y (km)", fontsize=7, labelpad=5, color="black")
+    axes[1].set_zlabel("Temps cumulé (min)", fontsize=7, labelpad=5, color="black")
 
     # Set axis ticks color
-    ax_cube.tick_params(axis="x", colors="black", labelsize=7)
-    ax_cube.tick_params(axis="y", colors="black", labelsize=7)
-    ax_cube.tick_params(axis="z", colors="black", labelsize=7)
+    axes[0].tick_params(axis="x", colors="black", labelsize=7)
+    axes[0].tick_params(axis="y", colors="black", labelsize=7)
+
+    axes[1].tick_params(axis="x", colors="black", labelsize=7)
+    axes[1].tick_params(axis="y", colors="black", labelsize=7)
+    axes[1].tick_params(axis="z", colors="black", labelsize=7)
 
     # Select tweets without noise
     no_noise_tweets = tweets[tweets.index.get_level_values(0) != -1]
@@ -121,7 +139,7 @@ def plot_cube_hulls(tweets, eps1_terrain, eps2, hulls, min_samples):
             no_noise_tweets.index.get_level_values(0) == cluster
         ]
         # Plot tweets in cluster
-        ax_cube.scatter3D(
+        axes[1].scatter3D(
             no_noise_tweetscluster["x_m"],
             no_noise_tweetscluster["y_m"],
             no_noise_tweetscluster["cumulative_time_sec"] / 60,
@@ -130,38 +148,22 @@ def plot_cube_hulls(tweets, eps1_terrain, eps2, hulls, min_samples):
             label="Noise" if cluster == -1 else "Cluster {}".format(cluster),
         )
 
-    # Axis properties
-    ax_cube.set_facecolor("white")
-    ax_cube.legend(
-        loc="best",
-        fontsize=9,
-        labelcolor="#22272e",
-        markerscale=2,
-        facecolor="white",
-        title_fontsize=14,
-        fancybox=False,
-        framealpha=1,
-        edgecolor="#22272e",
-    )
-
-    # Read France geojson
+    # Plot basemap
     basemap = gpd.read_file(filename="../data/france.geojson")
-    basemap = basemap.to_crs("EPSG:2154")
-
-    # Plot base map
-    basemap.plot(ax=ax_hull, color="#F2E7DC", figsize=(7, 7), linewidth=0)
-    ax_hull.set_facecolor("#818274")
-    ax_hull.get_figure().patch.set_facecolor("white")
+    basemap.plot(ax=axes[0], color="#F2E7DC", linewidth=0)
 
     # Plot tweets with color based on cluster
+    cluster_ls = []
+    num_tweets_ls = []
     for cluster in tweets.index.get_level_values(0).unique():
         # Number of tweets in cluster
         num_tweets = len(tweets[tweets.index.get_level_values(0) == cluster])
         # Check whether cluster id exists in hulls
         if cluster in hulls.index.values or cluster == -1:
-            print("Cluster {}: {} tweets".format(cluster, num_tweets))
+            cluster_ls.append(f"Cluster {cluster}")
+            num_tweets_ls.append(num_tweets)
             tweets[tweets.index.get_level_values(0) == cluster].plot(
-                ax=ax_hull,
+                ax=axes[0],
                 markersize=6 if cluster == -1 else 10,
                 label="Noise" if cluster == -1 else "Cluster {}".format(cluster),
                 marker="x" if cluster != -1 else "+",
@@ -169,17 +171,48 @@ def plot_cube_hulls(tweets, eps1_terrain, eps2, hulls, min_samples):
                 linewidth=0.5 if cluster == -1 else 0.8,
             )
 
+    # Combine cluster ids and number of tweets in a list
+    result = [cluster_ls, num_tweets_ls]
+    table = PrettyTable(result[0])
+    table.add_row(result[1])
+    print(table)
+
     for cluster in hulls.index:
         hulls[hulls.index == cluster].plot(
-            ax=ax_hull,
+            ax=axes[0],
             alpha=0.3,
             color="C{}".format(cluster),
             edgecolor="C{}".format(cluster),
             linewidth=1,
         )
 
-    # Set legend
-    ax_hull.legend(
+    # Add grid
+    axes[0].grid(color="#161819", linestyle="-", linewidth=0.2, alpha=0.3)
+
+    # Add text box
+    textstr = "\n".join(
+        (
+            r"$eps1=%.0f$ km" % (eps1 / 1_000,),
+            r"$eps2=%d$ min" % (int(eps2 / 60),),
+            r"$min_{samples}=%d$ tweets" % (min_samples,),
+        )
+    )
+
+    props = dict(facecolor="white", edgecolor="#22272e")
+
+    axes[0].text(
+        0.02,
+        0.98,
+        textstr,
+        transform=axes[1].transAxes,
+        fontsize=8,
+        verticalalignment="top",
+        bbox=props,
+        color="#22272e",
+    )
+
+    # Legend
+    axes[0].legend(
         loc="best",
         fontsize=9,
         labelcolor="#22272e",
@@ -191,44 +224,25 @@ def plot_cube_hulls(tweets, eps1_terrain, eps2, hulls, min_samples):
         edgecolor="#22272e",
     )
 
-    # Add grid
-    ax_hull.grid(color="#161819", linestyle="-", linewidth=0.2, alpha=0.3)
-
-    # Change tick labels
-    m2km = lambda x, _: f"{x/1000:g}"
-    ax_hull.xaxis.set_major_formatter(m2km)
-    ax_hull.yaxis.set_major_formatter(m2km)
-
-    # Set axis labels
-    ax_hull.set_xlabel("X (km)", fontsize=7, labelpad=5, color="black")
-    ax_hull.set_ylabel("Y (km)", fontsize=7, labelpad=5, color="black")
-
-    # Set axis ticks color
-    ax_hull.tick_params(axis="x", colors="black", labelsize=7)
-    ax_hull.tick_params(axis="y", colors="black", labelsize=7)
-
-    textstr = "\n".join(
-        (
-            r"$eps1=%.0f$ km" % (eps1_terrain / 1_000,),
-            r"$eps2=%d$ min" % (int(eps2 / 60),),
-            r"$min_{samples}=%d$ tweets" % (min_samples,),
-        )
+    axes[1].legend(
+        loc="best",
+        fontsize=9,
+        labelcolor="#22272e",
+        markerscale=2,
+        facecolor="white",
+        title_fontsize=14,
+        fancybox=False,
+        framealpha=1,
+        edgecolor="#22272e",
     )
 
-    # these are matplotlib.patch.Patch properties
-    props = dict(facecolor="white", edgecolor="#22272e")
-
-    # place a text box in upper left in axes coords
-    ax_hull.text(
-        0.02,
-        0.98,
-        textstr,
-        transform=ax_hull.transAxes,
-        fontsize=8,
-        verticalalignment="top",
-        bbox=props,
-        color="#22272e",
+    # Save figure
+    plt.savefig(
+        fname=f"./images/st_dbscan/st_dbscan_eps1_{int(eps1 / 1_000)}_km_eps2_{int(eps2 / 60)}_min_{min_samples}.png",
+        dpi=300,
+        facecolor=fig.get_facecolor(),
+        pad_inches=0.3,
+        bbox_inches="tight",
     )
 
-    plt.tight_layout(pad=3.0)
     plt.show()

@@ -1,7 +1,7 @@
 # Agnostic Extraction af Quake's Active Area
 
 <p align='center'>
-    <img src="./notebooks/images/st_dbscan/st_dbscan_eps1_90_km_eps2_10_min.png" alt="2D Plot" width="650"/>
+    <img src="./notebooks/images/st_dbscan/st_dbscan_eps1_90_km_eps2_10_min_22.png" alt="2D Plot" width="650"/>
 </p>
 
 ## Context
