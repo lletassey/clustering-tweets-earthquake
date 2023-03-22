@@ -18,7 +18,7 @@ To run the ST-DBSCAN Jupyter Notebook, you'll need to setup a conda environment.
 conda env create -f environment.yml
 ```
 
-You'll find the ST-DBSCAN Jupyter Notebook in the `notebooks` folder.
+You'll find the **ST-DBSCAN** Jupyter Notebook in the `notebooks` folder.
 
 ## Analysis
 
@@ -37,7 +37,19 @@ For us to choose the optimal parameters for ST-DBSCAN, we iterated over the mini
 
 ## Results
 
-We adopted the following parameters: `eps1 = 90 km` and `eps2 = 10 min` and a minimum number of tweets of 22. We used ThreeJS to plot cluster hulls. Visit [this link](https://lletassey.github.io/clustering-tweets-earthquake/threejs/index.html) to see the result.
+We adopted the following parameters:
+
+| eps1 (distance) | eps2 (time) |  MinPts (tweets)  |
+| --------------- | ----------- | --------- |
+|      90 km      |    10 min   | 22 tweets |
+
+The clustering took 1.62 s for a total of 5 clusters.
+
+| Time (s) |  # of clusters  |
+| ----------- | --------- |
+|    1.62   | 5 |
+
+We use ThreeJS to visualize the results. Visit [this link](https://lletassey.github.io/clustering-tweets-earthquake/threejs/index.html).
 
 <p align='center'>
     <img src="./notebooks/images/st_dbscan/threejs.png" alt="3D Plot" width="450"/>
