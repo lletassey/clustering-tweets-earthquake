@@ -10,6 +10,8 @@ This project is part of a course issued at the ENSG-Géomatique school, it was p
 
 As a case study, we worked on the 2019 Teil Quake by testing different clustering algorithms to find the most active areas. Since tweets have a temporal dimension, we decided to use a spatial temporal clustering algorithm. In our case we used [ST-DBSCAN](https://github.com/eren-ck/st_dbscan).
 
+You can read the report [here](https://issuu.com/salaheddine.elfarissi/docs/quake-tweets-clustering-report).
+
 ## Setup
 
 To run the ST-DBSCAN Jupyter Notebook, you'll need to setup a conda environment. To do so, run the following command in your terminal:
@@ -18,7 +20,7 @@ To run the ST-DBSCAN Jupyter Notebook, you'll need to setup a conda environment.
 conda env create -f environment.yml
 ```
 
-You'll find the **ST-DBSCAN** Jupyter Notebook in the `notebooks` folder.
+You'll find the **ST-DBSCAN** Jupyter Notebook in the `notebooks` folder. We recommend you to use Visual Studio Code to run the notebook.
 
 ## Analysis
 
